@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { Wrapper } from './Wrapper/Wrapper';
-import { Title } from './Title/Title';
+import { Title } from './Title/TitleStyled';
 import { Section } from './Section/Section';
 import { FeedbackOptions } from './FeedbackOptions/FeedbackOptions';
 import { Statistics } from './Statistics/Statistics';
@@ -18,41 +18,42 @@ export class App extends Component {
       [feedback]: prevState[feedback] + 1,
     }));
   };
+  countTotalFeedback = () => {
+    return Object.values(this.state).reduce((acc, value) => acc + value, 0);
+  };
+  countPositiveFeedbackPercentage = () => {
+    const totalFeedback = this.countTotalFeedback();
+    return totalFeedback
+      ? Math.round((this.state.good / totalFeedback) * 100)
+      : 0;
+  };
   render() {
     const { good, neutral, bad } = this.state;
     const options = Object.keys(this.state);
-    const totalFeedback = good + neutral + bad;
-    const positiveFeedbackPercentage = totalFeedback
-      ? Math.round((good / totalFeedback) * 100)
-      : 0;
+    const totalFeedback = this.countTotalFeedback();
+    const positiveFeedbackPercentage = this.countPositiveFeedbackPercentage();
     return (
       <Wrapper>
         <Title>GoIT React Woolf HW-02 "Feedback"</Title>
-        <Section
-          title="Please leave feedback"
-          children={
-            <FeedbackOptions
-              onLeaveFeedback={this.addFeedback}
-              options={options}
+        <Section title="Please leave feedback">
+          <FeedbackOptions
+            onLeaveFeedback={this.addFeedback}
+            options={options}
+          />
+        </Section>
+        <Section title="Statistics">
+          {totalFeedback ? (
+            <Statistics
+              good={good}
+              neutral={neutral}
+              bad={bad}
+              totalFeedback={totalFeedback}
+              positiveFeedbackPercentage={positiveFeedbackPercentage}
             />
-          }
-        />
-        <Section
-          title="Statistics"
-          children={
-            totalFeedback ? (
-              <Statistics
-                good={good}
-                neutral={neutral}
-                bad={bad}
-                totalFeedback={totalFeedback}
-                positiveFeedbackPercentage={positiveFeedbackPercentage}
-              />
-            ) : (
-              <Notification message={'There is no feedback'} />
-            )
-          }
-        />
+          ) : (
+            <Notification message={'There is no feedback'} />
+          )}
+        </Section>
       </Wrapper>
     );
   }

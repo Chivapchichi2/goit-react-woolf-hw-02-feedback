@@ -1,7 +1,3 @@
-import styled from 'styled-components';
+import { P } from './NotificationStyled';
 
-const P = styled.p`
-  font-size: 20px;
-  color: #c90e15;
-`;
 export const Notification = ({ message }) => <P>{message}</P>;
